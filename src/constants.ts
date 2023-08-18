@@ -45,6 +45,7 @@ export const Constants = Object.freeze({
 export enum Blockchain {
   Ethereum = 'eth',
   Polygon = 'polygon',
+  Shibarium = 'shibarium',
   ZkEVM = 'zkevm',
   Unknown = 'unknown',
   NoChain = '',
@@ -56,6 +57,7 @@ export enum NetworkId {
   Mumbai = 'mumbai',
   Goerli = 'goerli',
   Sepolia = 'sepolia',
+  PuppyNet = 'puppynet',
   Test = 'test',
   Unknown = 'unknown',
   NoNetwork = ''
@@ -64,12 +66,14 @@ export enum NetworkId {
 export enum DidMethod {
   Iden3 = 'iden3',
   PolygonId = 'polygonid',
+  Shib = 'shib',
   Other = ''
 }
 
 export const DidMethodByte: { [key: string]: number } = Object.freeze({
   [DidMethod.Iden3]: 0b00000001,
   [DidMethod.PolygonId]: 0b00000010,
+  [DidMethod.Shib]: 0b00000011,
   [DidMethod.Other]: 0b11111111
 });
 
@@ -96,6 +100,11 @@ export const DidMethodNetwork: {
     [`${Blockchain.Ethereum}:${NetworkId.Sepolia}`]: 0b00100000 | 0b00000011,
     [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 0b00110000 | 0b00000001,
     [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 0b00110000 | 0b00000010
+  },
+  [DidMethod.Shib]: {
+    [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
+    [`${Blockchain.Shibarium}:${NetworkId.Main}`]: 0b01000000 | 0b00000001,
+    [`${Blockchain.Shibarium}:${NetworkId.PuppyNet}`]: 0b01000000 | 0b00000010,
   },
   [DidMethod.Other]: {
     [`${Blockchain.Unknown}:${NetworkId.Unknown}`]: 0b11111111

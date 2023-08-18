@@ -45,6 +45,36 @@ describe('DID tests', () => {
     expect(Uint8Array.from([DidMethodByte[DidMethod.Iden3], 0b0])).toStrictEqual(id.type());
   });
 
+  it('TestParseShibDID', () => {
+    // did
+    let didStr = 'did:shib:shibarium:main:3suph5aVnT3uDycoQqtYjm5eJx2295k3L5XeHXd8Kq';
+
+    let did3 = DID.parse(didStr);
+    let id = DID.idFromDID(did3);
+    expect('3suph5aVnT3uDycoQqtYjm5eJx2295k3L5XeHXd8Kq').toEqual(id.string());
+    let method = DID.methodFromId(id);
+    expect(DidMethod.Shib).toBe(method);
+    let blockchain = DID.blockchainFromId(id);
+    expect(Blockchain.Shibarium).toBe(blockchain);
+    let networkId = DID.networkIdFromId(id);
+    expect(NetworkId.Main).toBe(networkId);
+
+    // readonly did
+    didStr = 'did:shib:readonly:3etR8HpjUyg29h5ssFaTghiBezcpmhidcZ6Z5WuNr3';
+
+    did3 = DID.parse(didStr);
+    id = DID.idFromDID(did3);
+    expect('3etR8HpjUyg29h5ssFaTghiBezcpmhidcZ6Z5WuNr3').toBe(id.string());
+    method = DID.methodFromId(id);
+    expect(DidMethod.Shib).toBe(method);
+    blockchain = DID.blockchainFromId(id);
+    expect(Blockchain.ReadOnly).toBe(blockchain);
+    networkId = DID.networkIdFromId(id);
+    expect(NetworkId.NoNetwork).toBe(networkId);
+
+    expect(Uint8Array.from([DidMethodByte[DidMethod.Shib], 0b0])).toStrictEqual(id.type());
+  });
+
   it('TestDID_UnmarshalJSON', () => {
     const parseRes = JSON.parse(
       `{"obj": "did:iden3:polygon:mumbai:wyFiV4w71QgWPn6bYLsZoysFay66gKtVa9kfu6yMZ"}`
