@@ -16,10 +16,11 @@ import {
 } from './did-helper';
 import { Parser } from './did-parser';
 import { IDID, Param } from './types';
-import { sha256 } from 'cross-sha256';
-
+import { sha256 } from '@iden3/js-crypto';
+import { encoder } from '../utils';
 // DID Decentralized Identifiers (DIDs)
 // https://w3c.github.io/did-core/#did-syntax
+
 export class DID {
   method = '';
   id = '';
@@ -106,9 +107,9 @@ export class DID {
   }
 
   static decodePartsFromId(id: Id): {
-    method: DidMethod;
-    blockchain: Blockchain;
-    networkId: NetworkId;
+    method: string;
+    blockchain: string;
+    networkId: string;
   } {
     const method = findDIDMethodByValue(id.bytes[0]);
     const blockchain = findBlockchainForDIDMethodByValue(method, id.bytes[1]);
@@ -118,22 +119,22 @@ export class DID {
     return { method, blockchain, networkId };
   }
 
-  static networkIdFromId(id: Id): NetworkId {
+  static networkIdFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).networkId;
   }
 
-  static methodFromId(id: Id): DidMethod {
+  static methodFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).method;
   }
 
-  static blockchainFromId(id: Id): Blockchain {
+  static blockchainFromId(id: Id): string {
     return DID.throwIfDIDUnsupported(id).blockchain;
   }
 
   private static throwIfDIDUnsupported(id: Id): {
-    method: DidMethod;
-    blockchain: Blockchain;
-    networkId: NetworkId;
+    method: string;
+    blockchain: string;
+    networkId: string;
   } {
     const { method, blockchain, networkId } = DID.decodePartsFromId(id);
 
@@ -190,7 +191,7 @@ export class DID {
     return id;
   }
 
-  static isUnsupported(method: DidMethod, blockchain: Blockchain, networkId: NetworkId): boolean {
+  static isUnsupported(method: string, blockchain: string, networkId: string): boolean {
     return (
       method == DidMethod.Other &&
       blockchain == Blockchain.Unknown &&
@@ -199,7 +200,7 @@ export class DID {
   }
 
   static idFromUnsupportedDID(did: DID): Id {
-    const hash = Uint8Array.from(new sha256().update(did.string()).digest());
+    const hash = sha256(encoder.encode(did.string()));
 
     const genesis = new Uint8Array(27);
     const idSlice = hash.slice(hash.length - Constants.GENESIS_LENGTH);
