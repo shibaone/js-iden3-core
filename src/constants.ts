@@ -42,33 +42,33 @@ export const Constants = Object.freeze({
   GENESIS_LENGTH: 27
 });
 
-export enum Blockchain {
-  Ethereum = 'eth',
-  Polygon = 'polygon',
-  Shibarium = 'shibarium',
-  ZkEVM = 'zkevm',
-  Unknown = 'unknown',
-  NoChain = '',
-  ReadOnly = 'readonly'
-}
+export const Blockchain: { [k: string]: string } = {
+  Ethereum: 'eth',
+  Polygon: 'polygon',
+  Shibarium: 'shibarium',
+  ZkEVM: 'zkevm',
+  Unknown: 'unknown',
+  NoChain: '',
+  ReadOnly: 'readonly'
+};
 
-export enum NetworkId {
-  Main = 'main',
-  Mumbai = 'mumbai',
-  Goerli = 'goerli',
-  Sepolia = 'sepolia',
-  PuppyNet = 'puppynet',
-  Test = 'test',
-  Unknown = 'unknown',
-  NoNetwork = ''
-}
+export const NetworkId: { [k: string]: string } = {
+  Main: 'main',
+  Mumbai: 'mumbai',
+  Goerli: 'goerli',
+  Sepolia: 'sepolia',
+  PuppyNet: 'puppynet',
+  Test: 'test',
+  Unknown: 'unknown',
+  NoNetwork: ''
+};
 
-export enum DidMethod {
-  Iden3 = 'iden3',
-  PolygonId = 'polygonid',
-  Shib = 'shib',
-  Other = ''
-}
+export const DidMethod: { [k: string]: string } = {
+  Iden3: 'iden3',
+  PolygonId: 'polygonid',
+  Shib: 'shib',
+  Other: ''
+};
 
 /**
  * Object containing chain IDs for various blockchains and networks.
