@@ -1,6 +1,6 @@
 import { SchemaHash } from './schemaHash';
 import { ElemBytes } from './elemBytes';
-import { Constants } from './constants';
+import { Constants, KeyType } from './constants';
 import { Id } from './id';
 import {
   checkBigIntArrayInField,
@@ -111,12 +111,14 @@ export enum Flags {
 export class Claim {
   private _index: ElemBytes[] = [];
   private _value: ElemBytes[] = [];
+  private _type?: KeyType;
 
-  constructor() {
+  constructor(type?: KeyType) {
     for (let i = 0; i < Constants.ELEM_BYTES_LENGTH; i++) {
       this._index[i] = new ElemBytes();
       this._value[i] = new ElemBytes();
     }
+    this._type = type;
   }
 
   // NewClaim creates new Claim with specified SchemaHash and any number of
@@ -215,7 +217,7 @@ export class Claim {
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
   setValueData(slotA: ElemBytes, slotB: ElemBytes): void {
     const slotsAsInts: bigint[] = [slotA.toBigInt(), slotB.toBigInt()];
-    if (!checkBigIntArrayInField(slotsAsInts)) {
+    if (this._type === KeyType.BabyJubJub && !checkBigIntArrayInField(slotsAsInts)) {
       throw Constants.ERRORS.DATA_OVERFLOW;
     }
     this._value[2] = slotA;
@@ -234,9 +236,13 @@ export class Claim {
     this._index[3] = this.setSlotBytes(slotB, SlotName.IndexB);
   }
 
+  setKeyType(type: KeyType): void {
+    this._type = type;
+  }
+
   private setSlotBytes(value: Uint8Array | null, slotName: SlotName): ElemBytes {
     const slot = new ElemBytes(value);
-    if (!checkBigIntInField(slot.toBigInt())) {
+    if (this._type === KeyType.BabyJubJub && !checkBigIntInField(slot.toBigInt())) {
       throw new ErrSlotOverflow(slotName);
     }
     return slot;
@@ -284,16 +290,16 @@ export class Claim {
     if (!value) {
       value = BigInt(0);
     }
-    if (!checkBigIntInField(value)) {
+    if (this._type === KeyType.BabyJubJub && !checkBigIntInField(value)) {
       throw new ErrSlotOverflow(slotName);
     }
-    return new ElemBytes().setBigInt(value);
+    return new ElemBytes().setBigInt(value, this._type!);
   }
   // SetIndexData sets data to index slots A & B.
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
   setIndexData(slotA: ElemBytes, slotB: ElemBytes) {
     const slotsAsInts: bigint[] = [slotA.toBigInt(), slotB.toBigInt()];
-    if (!checkBigIntArrayInField(slotsAsInts)) {
+    if (this._type === KeyType.BabyJubJub && !checkBigIntArrayInField(slotsAsInts)) {
       throw Constants.ERRORS.DATA_OVERFLOW;
     }
     this._index[2] = slotA;
@@ -499,9 +505,9 @@ export class Claim {
     this._value = [];
     for (let i = 0, j = Constants.ELEM_BYTES_LENGTH; i < ints.length / 2; i++, j++) {
       this._index[i] = new ElemBytes();
-      this._index[i].setBigInt(ints[i]);
+      this._index[i].setBigInt(ints[i], this._type!);
       this._value[i] = new ElemBytes();
-      this._value[i].setBigInt(ints[j]);
+      this._value[i].setBigInt(ints[j], this._type!);
     }
     return this;
   }
@@ -614,6 +620,10 @@ export class ClaimOptions {
   // Returns ErrSlotOverflow if slotA or slotB value are too big.
   static withIndexDataInts(slotA: bigint | null, slotB: bigint | null): ClaimOption {
     return (c: Claim) => c.setIndexDataInts(slotA, slotB);
+  }
+
+  static withKeyType(type: KeyType): ClaimOption {
+    return (c: Claim) => c.setKeyType(type);
   }
 
   // WithValueData sets data to value slots A & B.

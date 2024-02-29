@@ -1,4 +1,4 @@
-import { Constants } from './constants';
+import { Constants, KeyType } from './constants';
 import { checkBigIntInField, fromLittleEndian, toLittleEndian, encoder } from './utils';
 import { Hex, sha256 } from '@iden3/js-crypto';
 export class BytesHelper {
@@ -89,8 +89,8 @@ export class ElemBytes {
     return BytesHelper.bytesToInt(this._bytes);
   }
 
-  setBigInt(n: bigint): ElemBytes {
-    if (!checkBigIntInField(n)) {
+  setBigInt(n: bigint, keyType: KeyType): ElemBytes {
+    if (keyType === KeyType.BabyJubJub && !checkBigIntInField(n)) {
       throw Constants.ERRORS.DATA_OVERFLOW;
     }
     this._bytes = BytesHelper.intToBytes(n);
@@ -122,8 +122,8 @@ export class ElemBytes {
     return result;
   }
 
-  static fromInt(i: bigint): ElemBytes {
-    if (!checkBigIntInField(i)) {
+  static fromInt(i: bigint, keyType: KeyType): ElemBytes {
+    if (keyType === KeyType.BabyJubJub && !checkBigIntInField(i)) {
       throw Constants.ERRORS.DATA_OVERFLOW;
     }
     const bytes = BytesHelper.intToBytes(i);

@@ -1,4 +1,4 @@
-import { Constants } from './constants';
+import { Constants, KeyType } from './constants';
 import { fromLittleEndian } from './utils';
 import { BytesHelper, ElemBytes } from './elemBytes';
 import { poseidon, base58ToBytes, base58FromBytes } from '@iden3/js-crypto';
@@ -100,7 +100,7 @@ export class Id {
     typ: Uint8Array, //nolint:revive
     state: bigint
   ): Id {
-    const idenStateData = ElemBytes.fromInt(state);
+    const idenStateData = ElemBytes.fromInt(state, KeyType.BabyJubJub);
 
     // we take last 27 bytes, because of swapped endianness
     const idGenesisBytes = idenStateData.bytes.slice(idenStateData.bytes.length - 27);

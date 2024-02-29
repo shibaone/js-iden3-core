@@ -42,6 +42,11 @@ export const Constants = Object.freeze({
   GENESIS_LENGTH: 27
 });
 
+export enum KeyType {
+  BabyJubJub = 'BJJ',
+  Secp256k1 = 'Secp256k1'
+}
+
 export const Blockchain: { [k: string]: string } = {
   Ethereum: 'eth',
   Polygon: 'polygon',
@@ -81,7 +86,8 @@ export const ChainIds: { [key: string]: number } = {
   [`${Blockchain.Polygon}:${NetworkId.Main}`]: 137,
   [`${Blockchain.Polygon}:${NetworkId.Mumbai}`]: 80001,
   [`${Blockchain.ZkEVM}:${NetworkId.Main}`]: 1101,
-  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 1442
+  [`${Blockchain.ZkEVM}:${NetworkId.Test}`]: 1442,
+  [`${Blockchain.Shibarium}:${NetworkId.PuppyNet}`]: 157
 };
 
 export const DidMethodByte: { [key: string]: number } = {
@@ -118,7 +124,7 @@ export const DidMethodNetwork: {
   [DidMethod.Shib]: {
     [`${Blockchain.ReadOnly}:${NetworkId.NoNetwork}`]: 0b00000000,
     [`${Blockchain.Shibarium}:${NetworkId.Main}`]: 0b01000000 | 0b00000001,
-    [`${Blockchain.Shibarium}:${NetworkId.PuppyNet}`]: 0b01000000 | 0b00000010,
+    [`${Blockchain.Shibarium}:${NetworkId.PuppyNet}`]: 0b01000000 | 0b00000010
   },
   [DidMethod.Other]: {
     [`${Blockchain.Unknown}:${NetworkId.Unknown}`]: 0b11111111
